@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/navigation_trading"
-        android:icon="@drawable/ic_trending_up_black_24dp.png"
+        android:icon="@drawable/ic_trending_up_black_24dp"
         android:title="@string/title_trading" />
 
     <item
@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/navigation_profile"
-        android:icon="@drawable/ic_account_box_black_24dp.png"
+        android:icon="@drawable/ic_account_circle_black_24dp"
         android:title="@string/title_profile" />
 
 </menu>
