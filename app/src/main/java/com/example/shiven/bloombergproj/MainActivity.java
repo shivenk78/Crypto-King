@@ -10,15 +10,18 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
+    BottomNavigationView navigation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView navigation = findViewById(R.id.navigation);
+        navigation = findViewById(R.id.menubar);
         navigation.setOnNavigationItemSelectedListener(this);
 
         loadFragment(new HomeFrag());
+        navigation.setSelectedItemId(R.id.navigation_home);
     }
 
     private boolean loadFragment(Fragment fragment){
