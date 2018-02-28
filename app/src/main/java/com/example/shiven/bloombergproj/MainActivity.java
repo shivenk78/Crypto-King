@@ -27,11 +27,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     ArrayList<URL> urls;
     ArrayList<String> cryptoNames;
-    ArrayList<Crypto> currency;
+    public static ArrayList<Crypto> currency;
     BufferedReader reader;
 
     BottomNavigationView navigation;
-    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +51,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             cryptoNames.add("EOS"); //eos
             cryptoNames.add("IOT"); //iota
 
-        listView = findViewById(R.id.id_listView);
         navigation = findViewById(R.id.menubar);
         navigation.setOnNavigationItemSelectedListener(this);
-
-        loadFragment(new HomeFrag());
-        navigation.setSelectedItemId(R.id.navigation_home);
 
         AsyncThread firstThread = new AsyncThread();
         firstThread.execute();
@@ -86,6 +81,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            loadFragment(new HomeFrag());
+            navigation.setSelectedItemId(R.id.navigation_home);
         }
     }
 
