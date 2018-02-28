@@ -44,6 +44,7 @@ public class CryptoAdapter extends ArrayAdapter {
         name.setText(currentCrypto.getName());
         symbol.setText(currentCrypto.getSymbol());
         price.setText("$"+currentCrypto.getPrice());
+        icon.setImageResource(currentCrypto.getPic());
 
         return layoutView;
     }

@@ -17,7 +17,7 @@ import java.util.List;
 
 public class Crypto {
 
-    int rank;
+    int rank,picID;
     double price;
     String symbol,name;
     JSONObject page;
@@ -32,6 +32,19 @@ public class Crypto {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        switch(sym){
+            case "BTC": picID = R.drawable.icon_btc; break;
+            case "ETH": picID = R.drawable.icon_eth; break;
+            case "BCH": picID = R.drawable.icon_bch; break;
+            case "ADA": picID = R.drawable.icon_ada; break;
+            case "XLM": picID = R.drawable.icon_xlm; break;
+            case "XRP": picID = R.drawable.icon_xrp; break;
+            case "IOT": picID = R.drawable.icon_iot; break;
+            case "NEO": picID = R.drawable.icon_neo; break;
+            case "EOS": picID = R.drawable.icon_eos; break;
+            case "LTC": picID = R.drawable.icon_ltc; break;
+            default: picID = R.drawable.ic_home_black_24dp; break;
+        }
     }
 
     public double getPrice(){
@@ -45,5 +58,8 @@ public class Crypto {
     }
     public String getName(){
         return name;
+    }
+    public int getPic(){
+        return picID;
     }
 }
