@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import static com.example.shiven.bloombergproj.MainActivity.currency;
@@ -26,6 +27,13 @@ public class HomeFrag extends Fragment{
 
         CryptoAdapter adapter = new CryptoAdapter(getActivity(), R.layout.crypto_layout, currency);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
+        });
 
         return view;
     }
