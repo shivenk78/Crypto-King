@@ -29,6 +29,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     ArrayList<String> cryptoNames;
     public static ArrayList<Crypto> currency;
     BufferedReader reader;
+    HomeFrag homeFrag;
+    LoadingFrag loadingFrag;
+    ProfileFrag profileFrag;
+    TradingFrag tradingFrag;
 
     BottomNavigationView navigation;
 
@@ -51,9 +55,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             cryptoNames.add("EOS"); //eos
             cryptoNames.add("IOT"); //iota
 
+        homeFrag = new HomeFrag();
+        profileFrag = new ProfileFrag();
+        loadingFrag = new LoadingFrag();
+        tradingFrag = new TradingFrag();
+
         navigation = findViewById(R.id.menubar);
         navigation.setOnNavigationItemSelectedListener(this);
+        navigation.setSelectedItemId(R.id.navigation_home);
 
+        loadFragment(loadingFrag);
         AsyncThread firstThread = new AsyncThread();
         firstThread.execute();
     }
@@ -105,13 +116,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         switch (item.getItemId()){
             case R.id.navigation_home:
-                fragment = new HomeFrag();
+                fragment = homeFrag;
                 break;
             case R.id.navigation_profile:
-                fragment = new ProfileFrag();
+                fragment = profileFrag;
                 break;
             case R.id.navigation_trading:
-                fragment = new TradingFrag();
+                fragment = tradingFrag;
                 break;
         }
 
