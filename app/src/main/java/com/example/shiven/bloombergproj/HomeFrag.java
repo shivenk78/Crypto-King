@@ -10,6 +10,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import static com.example.shiven.bloombergproj.MainActivity.currency;
+import static com.example.shiven.bloombergproj.MainActivity.navigation;
+import static com.example.shiven.bloombergproj.MainActivity.tradingFrag;
 
 /**
  * Created by Shiven on 2/26/2018.
@@ -31,10 +33,21 @@ public class HomeFrag extends Fragment{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+                tradingFrag.setCrypto(currency.get(i));
+                loadFragment(tradingFrag);
+                tradingFrag.graph();
+                navigation.setSelectedItemId(R.id.navigation_trading);
             }
         });
 
         return view;
+    }
+
+    private boolean loadFragment(Fragment fragment){
+        if(fragment!=null){
+            getFragmentManager().beginTransaction().replace(R.id.id_fragment_frame, fragment).commit();
+            return true;
+        }
+        return false;
     }
 }

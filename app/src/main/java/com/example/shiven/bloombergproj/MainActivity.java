@@ -29,12 +29,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     ArrayList<String> cryptoNames;
     public static ArrayList<Crypto> currency;
     BufferedReader reader;
-    HomeFrag homeFrag;
-    LoadingFrag loadingFrag;
-    ProfileFrag profileFrag;
-    TradingFrag tradingFrag;
+    public static HomeFrag homeFrag;
+    public static LoadingFrag loadingFrag;
+    public static ProfileFrag profileFrag;
+    public static TradingFrag tradingFrag;
 
-    BottomNavigationView navigation;
+    public static BottomNavigationView navigation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         homeFrag = new HomeFrag();
         profileFrag = new ProfileFrag();
         loadingFrag = new LoadingFrag();
-        tradingFrag = new TradingFrag();
 
         navigation = findViewById(R.id.menubar);
         navigation.setOnNavigationItemSelectedListener(this);
@@ -98,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         protected void onPostExecute(Object o) {
             loadFragment(new HomeFrag());
             navigation.setSelectedItemId(R.id.navigation_home);
+            tradingFrag = new TradingFrag();
+                tradingFrag.setCrypto(currency.get(0));
         }
     }
 
