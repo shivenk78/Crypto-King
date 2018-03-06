@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
@@ -41,6 +43,7 @@ public class TradingFrag extends Fragment{
     GraphView graphView;
     String graphMode;
     ListView tradingListView;
+    RadioGroup radioGroup;
     ArrayList<Long> times = new ArrayList<>();
     ArrayList<Double> prices = new ArrayList<>();
 
@@ -53,12 +56,28 @@ public class TradingFrag extends Fragment{
         crypto = currency.get(bundle.getInt(CRYPTO_KEY));
         Log.d(TAG_LOG,"Bundle Received containing: "+crypto.getName());
         tradingListView = (ListView)view.findViewById(R.id.trading_listView);
+        radioGroup = (RadioGroup)view.findViewById(R.id.trading_radioGroup);
         graphView = view.findViewById(R.id.id_graphView);
             graphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity()));
             graphView.getGridLabelRenderer().setVerticalAxisTitle("Price (USD)");
             graphView.getGridLabelRenderer().setHorizontalAxisTitle("Date/Time");
 
-        graphMode = "1day";
+        graphMode="1day";
+        ((RadioButton)(radioGroup.getChildAt(0))).setChecked(true);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int i) {
+                Log.d(TAG_LOG,"RadioGroup changed to button "+i);
+                switch (i){
+                    case R.id.radio_1: graphMode="1day"; break;
+                    case R.id.radio_7: graphMode="7day"; break;
+                    case R.id.radio_30: graphMode="30day"; break;
+                    case R.id.radio_365: graphMode="365day"; break;
+                    default: graphMode="1day"; break;
+                }
+                graph();
+            }
+        });
         setCrypto();
         graph();
 
@@ -81,7 +100,7 @@ public class TradingFrag extends Fragment{
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
-                Log.d(TAG_LOG,"Async Graph STARTING using Currency: "+crypto.getName());
+                Log.d(TAG_LOG,"Async Graph STARTING using Currency: "+crypto.getName()+" with mode "+graphMode.toUpperCase());
                 URL website = new URL("http://coincap.io/history/" + graphMode + "/" + crypto.getSymbol());
                 URLConnection connection = website.openConnection();
                 InputStream inputStream = connection.getInputStream();
@@ -94,13 +113,13 @@ public class TradingFrag extends Fragment{
                 }
                 JSONObject temp1 = new JSONObject(initialJson);
                 JSONArray priceArray = temp1.getJSONArray("price");
-                Log.d(TAG_LOG,priceArray.length()+"");
+                times = new ArrayList<>();
+                prices = new ArrayList<>();
                 for(int i=0; i<priceArray.length(); i++){
                     times.add( Long.parseLong(priceArray.getJSONArray(i).getString(0)));
                     prices.add( Double.parseDouble(priceArray.getJSONArray(i).getString(1)));
                 }
-                Log.d(TAG_LOG,times.toString());
-                Log.d(TAG_LOG,prices.toString());
+                Log.d(TAG_LOG,"Array Length: "+times.size());
             }catch(Exception e){
                 Log.d(TAG_LOG,"Graph AsyncThread caught "+e);
             }
@@ -113,10 +132,9 @@ public class TradingFrag extends Fragment{
             DataPoint[] dataPoints = new DataPoint[times.size()];
             for(int i=0; i<times.size(); i++){
                 dataPoints[i] = new DataPoint(times.get(i),prices.get(i));
-                Log.d(TAG_LOG,dataPoints[i].toString());
             }
             LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>(dataPoints);
-            graphView.addSeries(lineGraphSeries);
+            graphView.removeAllSeries();
             graphView.getViewport().setScalable(true);
             graphView.getViewport().setScrollable(true);
             graphView.getViewport().setScalableY(true);

@@ -42,6 +42,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:buttonTint="@color/colorPrimary"
         app:layout_constraintVertical_bias="0.982">
 
         <RadioButton
@@ -49,6 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:buttonTint="@color/colorPrimary"
             android:text="1 day" />
 
         <RadioButton
@@ -56,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:buttonTint="@color/colorPrimary"
             android:text="7 days" />
 
         <RadioButton
@@ -63,6 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:buttonTint="@color/colorPrimary"
             android:text="30 days" />
 
         <RadioButton
@@ -70,6 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:buttonTint="@color/colorPrimary"
             android:text="1 year" />
 
     </RadioGroup>
