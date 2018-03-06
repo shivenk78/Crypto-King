@@ -9,13 +9,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by Shiven on 2/27/2018.
  */
 
-public class Crypto {
+public class Crypto{
 
     int rank,picID;
     double price;

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
@@ -23,8 +24,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import static com.example.shiven.bloombergproj.MainActivity.CRYPTO_KEY;
 import static com.example.shiven.bloombergproj.MainActivity.TAG_LOG;
 import static com.example.shiven.bloombergproj.MainActivity.currency;
 
@@ -34,42 +37,51 @@ import static com.example.shiven.bloombergproj.MainActivity.currency;
 
 public class TradingFrag extends Fragment{
 
-    Crypto crypto;
+    public Crypto crypto = currency.get(0);
     GraphView graphView;
     String graphMode;
     ListView tradingListView;
-    ArrayList<String> prices;
+    ArrayList<Long> times = new ArrayList<>();
+    ArrayList<Double> prices = new ArrayList<>();
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_trading, null);
 
+        Bundle bundle = getArguments();
+        crypto = currency.get(bundle.getInt(CRYPTO_KEY));
+        Log.d(TAG_LOG,"Bundle Received containing: "+crypto.getName());
         tradingListView = (ListView)view.findViewById(R.id.trading_listView);
         graphView = view.findViewById(R.id.id_graphView);
-        graphMode = "7day";
+            graphView.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity()));
+            graphView.getGridLabelRenderer().setVerticalAxisTitle("Price (USD)");
+            graphView.getGridLabelRenderer().setHorizontalAxisTitle("Date/Time");
+
+        graphMode = "1day";
+        setCrypto();
+        graph();
 
         return view;
     }
 
-    public void setCrypto(Crypto c){
-        if (currency.size() > 0) {
-            crypto = c;
-            ArrayList<Crypto> cryptoList = new ArrayList<>();
-            cryptoList.add(crypto);
-            CryptoAdapter adapter = new CryptoAdapter(getActivity(), R.layout.crypto_layout, cryptoList);
-            tradingListView.setAdapter(adapter);
-        }
+    public void setCrypto(){
+        ArrayList<Crypto> cryptoList = new ArrayList<>();
+        cryptoList.add(crypto);
+        CryptoAdapter adapter = new CryptoAdapter(getActivity(), R.layout.crypto_layout, cryptoList);
+        tradingListView.setAdapter(adapter);
     }
 
     public void graph(){
-        new GraphThread().execute();
+        GraphThread graphThread = new GraphThread();
+        graphThread.execute();
     }
 
     public class GraphThread extends AsyncTask{
         @Override
         protected Object doInBackground(Object[] objects) {
             try {
+                Log.d(TAG_LOG,"Async Graph STARTING using Currency: "+crypto.getName());
                 URL website = new URL("http://coincap.io/history/" + graphMode + "/" + crypto.getSymbol());
                 URLConnection connection = website.openConnection();
                 InputStream inputStream = connection.getInputStream();
@@ -82,14 +94,35 @@ public class TradingFrag extends Fragment{
                 }
                 JSONObject temp1 = new JSONObject(initialJson);
                 JSONArray priceArray = temp1.getJSONArray("price");
+                Log.d(TAG_LOG,priceArray.length()+"");
                 for(int i=0; i<priceArray.length(); i++){
-                    prices.add(priceArray.getJSONArray(i).getString(1));
+                    times.add( Long.parseLong(priceArray.getJSONArray(i).getString(0)));
+                    prices.add( Double.parseDouble(priceArray.getJSONArray(i).getString(1)));
                 }
+                Log.d(TAG_LOG,times.toString());
                 Log.d(TAG_LOG,prices.toString());
             }catch(Exception e){
                 Log.d(TAG_LOG,"Graph AsyncThread caught "+e);
             }
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            DataPoint[] dataPoints = new DataPoint[times.size()];
+            for(int i=0; i<times.size(); i++){
+                dataPoints[i] = new DataPoint(times.get(i),prices.get(i));
+                Log.d(TAG_LOG,dataPoints[i].toString());
+            }
+            LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>(dataPoints);
+            graphView.addSeries(lineGraphSeries);
+            graphView.getViewport().setScalable(true);
+            graphView.getViewport().setScrollable(true);
+            graphView.getViewport().setScalableY(true);
+            graphView.getViewport().setScrollableY(true);
+        }
     }
+
+
 }

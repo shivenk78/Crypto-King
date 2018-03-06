@@ -24,6 +24,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     final static String TAG_LOG = "iamdebugging";
+    final static String CRYPTO_KEY = "cryptocurrencykey";
 
     ArrayList<URL> urls;
     ArrayList<String> cryptoNames;
@@ -98,7 +99,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             loadFragment(new HomeFrag());
             navigation.setSelectedItemId(R.id.navigation_home);
             tradingFrag = new TradingFrag();
-                tradingFrag.setCrypto(currency.get(0));
+            Bundle bundle = new Bundle();
+            bundle.putInt(CRYPTO_KEY,0);
+                tradingFrag.setArguments(bundle);
         }
     }
 

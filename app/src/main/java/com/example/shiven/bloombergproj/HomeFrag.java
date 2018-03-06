@@ -3,12 +3,15 @@ package com.example.shiven.bloombergproj;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import static com.example.shiven.bloombergproj.MainActivity.CRYPTO_KEY;
+import static com.example.shiven.bloombergproj.MainActivity.TAG_LOG;
 import static com.example.shiven.bloombergproj.MainActivity.currency;
 import static com.example.shiven.bloombergproj.MainActivity.navigation;
 import static com.example.shiven.bloombergproj.MainActivity.tradingFrag;
@@ -33,9 +36,11 @@ public class HomeFrag extends Fragment{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                tradingFrag.setCrypto(currency.get(i));
+                Bundle bundle = new Bundle();
+                bundle.putInt(CRYPTO_KEY,i);
+                tradingFrag = new TradingFrag();
+                tradingFrag.setArguments(bundle);
                 loadFragment(tradingFrag);
-                tradingFrag.graph();
                 navigation.setSelectedItemId(R.id.navigation_trading);
             }
         });
