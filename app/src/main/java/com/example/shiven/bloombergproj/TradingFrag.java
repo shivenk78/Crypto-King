@@ -8,9 +8,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
@@ -32,6 +35,7 @@ import java.util.List;
 import static com.example.shiven.bloombergproj.MainActivity.CRYPTO_KEY;
 import static com.example.shiven.bloombergproj.MainActivity.TAG_LOG;
 import static com.example.shiven.bloombergproj.MainActivity.currency;
+import static com.example.shiven.bloombergproj.MainActivity.initialInvestment;
 
 /**
  * Created by Shiven on 2/26/2018.
@@ -40,6 +44,8 @@ import static com.example.shiven.bloombergproj.MainActivity.currency;
 public class TradingFrag extends Fragment{
 
     public Crypto crypto = currency.get(0);
+    Button add;
+    EditText editText;
     GraphView graphView;
     String graphMode;
     ListView tradingListView;
@@ -55,6 +61,8 @@ public class TradingFrag extends Fragment{
         Bundle bundle = getArguments();
         crypto = currency.get(bundle.getInt(CRYPTO_KEY));
         Log.d(TAG_LOG,"Bundle Received containing: "+crypto.getName());
+        editText = (EditText)view.findViewById(R.id.id_addAmount);
+        add = (Button)view.findViewById(R.id.id_add);
         tradingListView = (ListView)view.findViewById(R.id.trading_listView);
         radioGroup = (RadioGroup)view.findViewById(R.id.trading_radioGroup);
         graphView = view.findViewById(R.id.id_graphView);
@@ -80,6 +88,15 @@ public class TradingFrag extends Fragment{
         });
         setCrypto();
         graph();
+
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initialInvestment.add(Double.parseDouble(editText.getText().toString()));
+                Toast.makeText(getActivity(), "Added to Portfolio", Toast.LENGTH_SHORT).show();
+                editText.setText("");
+            }
+        });
 
         return view;
     }

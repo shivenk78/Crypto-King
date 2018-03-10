@@ -1,6 +1,8 @@
 package com.example.shiven.bloombergproj;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,16 +17,28 @@ import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     final static String TAG_LOG = "iamdebugging";
     final static String CRYPTO_KEY = "cryptocurrencykey";
+    final static String SAVE_FILE_NAME = "savefilename";
+
+    public static ArrayList<Double> initialInvestment;
+    public static ArrayList<Double> quantities;
 
     ArrayList<URL> urls;
     ArrayList<String> cryptoNames;
@@ -44,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         urls = new ArrayList<>();
         currency = new ArrayList<>();
+        quantities = new ArrayList<>();
+        initialInvestment = new ArrayList<>();
         cryptoNames = new ArrayList<>();
             cryptoNames.add("BTC"); //bitcoin
             cryptoNames.add("ETH"); //ethereum
@@ -131,5 +147,51 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
 
         return loadFragment(fragment);
+    }
+
+    @Override
+    protected void onStart() {
+        try {
+            FileInputStream inputStream = openFileInput(SAVE_FILE_NAME);
+            ArrayList<Double> tempList = new ArrayList<>();
+            String tempString="";
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+            String nextLn;
+            while( (nextLn=reader.readLine())!=null ){
+                //tempList.add(Double.parseDouble(nextLn));
+                tempString+=nextLn;
+            }
+            Log.d(TAG_LOG,tempString.toString());
+        }catch (Exception e){
+            Log.d(TAG_LOG,"onStart caught "+e);
+        }
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(SAVE_FILE_NAME,false));
+            for(int i=0; i<initialInvestment.size(); i++){
+                writer.write(initialInvestment.get(i).toString());
+                writer.newLine();
+            }
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /*FileOutputStream fileOutputStream;
+        try{
+            fileOutputStream = openFileOutput(SAVE_FILE_NAME, Context.MODE_PRIVATE);
+            for(int i=0; i<initialInvestment.size(); i++){
+                fileOutputStream.write(initialInvestment.get(i).byteValue());
+            }
+            fileOutputStream.close();
+            Log.d(TAG_LOG, new File(SAVE_FILE_NAME).getAbsoluteFile().toString());
+        }catch(Exception e){
+            e.printStackTrace();
+        }*/
+        super.onStop();
     }
 }
