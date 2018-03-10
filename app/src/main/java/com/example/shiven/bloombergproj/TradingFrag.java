@@ -135,6 +135,7 @@ public class TradingFrag extends Fragment{
             }
             LineGraphSeries<DataPoint> lineGraphSeries = new LineGraphSeries<>(dataPoints);
             graphView.removeAllSeries();
+            graphView.addSeries(lineGraphSeries);
             graphView.getViewport().setScalable(true);
             graphView.getViewport().setScrollable(true);
             graphView.getViewport().setScalableY(true);
