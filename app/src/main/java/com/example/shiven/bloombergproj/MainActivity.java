@@ -21,6 +21,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,19 +36,20 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     final static String TAG_LOG = "iamdebugging";
     final static String CRYPTO_KEY = "cryptocurrencykey";
-    final static String SAVE_FILE_NAME = "savefilename";
 
-    public static ArrayList<Double> initialInvestment;
+    public static Double initialInvestment;
     public static ArrayList<Double> quantities;
 
     ArrayList<URL> urls;
     ArrayList<String> cryptoNames;
     public static ArrayList<Crypto> currency;
     BufferedReader reader;
+    public static File saveFile;
     public static HomeFrag homeFrag;
     public static LoadingFrag loadingFrag;
     public static ProfileFrag profileFrag;
     public static TradingFrag tradingFrag;
+
 
     public static BottomNavigationView navigation;
 
@@ -55,11 +57,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        saveFile = new File(getFilesDir(),"savefile.txt");
 
         urls = new ArrayList<>();
         currency = new ArrayList<>();
         quantities = new ArrayList<>();
-        initialInvestment = new ArrayList<>();
+        initialInvestment = 0.0;
+        for(int i=0; i<10; i++) {
+            quantities.add(0.0);
+        }
         cryptoNames = new ArrayList<>();
             cryptoNames.add("BTC"); //bitcoin
             cryptoNames.add("ETH"); //ethereum
@@ -100,8 +106,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                     while( (nextLn = reader.readLine()) != null){
                         initialJson+=nextLn;
                     }
-                    Log.d(TAG_LOG,"CRYPTO "+i+"\t"+initialJson);
                     currency.add(new Crypto(cryptoNames.get(i),new JSONObject(initialJson)));
+                    Log.d(TAG_LOG,"CRYPTO "+i+" "+currency.get(i).getName());
                 }
             }catch(Exception e){
                 Log.d(TAG_LOG,"First Async TC caught: "+e);
@@ -129,12 +135,28 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return false;
     }
 
+    public static void resetProfile(){
+        initialInvestment = 0.0;
+        for(int i=0; i<10; i++) {
+            quantities.set(i,0.0);
+        }
+    }
+
+    public static double getCurrentValue(){
+        Log.d(TAG_LOG,quantities.toString());
+        double temp = 0.0;
+        for(int i=0; i<currency.size(); i++){
+            temp+=currency.get(i).getPrice()*quantities.get(i);
+        }
+        return temp;
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         Fragment fragment = null;
 
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.navigation_home:
                 fragment = homeFrag;
                 break;
@@ -152,17 +174,19 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onStart() {
         try {
-            FileInputStream inputStream = openFileInput(SAVE_FILE_NAME);
-            ArrayList<Double> tempList = new ArrayList<>();
-            String tempString="";
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            FileReader fileReader = new FileReader(saveFile);
+            BufferedReader startReader = new BufferedReader(fileReader);
 
             String nextLn;
-            while( (nextLn=reader.readLine())!=null ){
-                //tempList.add(Double.parseDouble(nextLn));
-                tempString+=nextLn;
+            initialInvestment=Double.parseDouble(startReader.readLine());
+            int i=0;
+            while( (nextLn=startReader.readLine())!=null ){
+                quantities.set(i,Double.parseDouble(nextLn));
+                i++;
             }
-            Log.d(TAG_LOG,tempString.toString());
+            startReader.close();
+
+            Log.d(TAG_LOG,quantities.toString());
         }catch (Exception e){
             Log.d(TAG_LOG,"onStart caught "+e);
         }
@@ -171,10 +195,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     protected void onStop() {
+        Log.d(TAG_LOG,"File Path: "+saveFile.getPath());
+        Log.d(TAG_LOG,saveFile.isFile()+"");
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(SAVE_FILE_NAME,false));
-            for(int i=0; i<initialInvestment.size(); i++){
-                writer.write(initialInvestment.get(i).toString());
+            BufferedWriter writer = new BufferedWriter(new FileWriter(saveFile,false));
+            writer.write(initialInvestment.toString());
+            writer.newLine();
+            for (int i = 0; i < quantities.size(); i++) {
+                writer.write(quantities.get(i).toString());
                 writer.newLine();
             }
             writer.close();

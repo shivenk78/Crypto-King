@@ -18,7 +18,8 @@ import java.util.List;
 
 public class Crypto{
 
-    int rank,picID;
+    static int indexCount = 0;
+    int rank,picID,index;
     double price;
     String symbol,name;
     JSONObject page;
@@ -46,6 +47,8 @@ public class Crypto{
             case "LTC": picID = R.drawable.icon_ltc; break;
             default: picID = R.drawable.ic_home_black_24dp; break;
         }
+        index=indexCount;
+        indexCount++;
     }
 
     public double getPrice(){
@@ -63,4 +66,5 @@ public class Crypto{
     public int getPic(){
         return picID;
     }
+    public int getIndex(){return  index;}
 }
