@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public static File saveFile;
     public static HomeFrag homeFrag;
     public static LoadingFrag loadingFrag;
-    public static ProfileFrag profileFrag;
     public static TradingFrag tradingFrag;
 
 
@@ -79,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             cryptoNames.add("IOT"); //iota
 
         homeFrag = new HomeFrag();
-        profileFrag = new ProfileFrag();
         loadingFrag = new LoadingFrag();
 
         navigation = findViewById(R.id.menubar);
@@ -161,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 fragment = homeFrag;
                 break;
             case R.id.navigation_profile:
-                fragment = profileFrag;
+                fragment = new ProfileFrag();
                 break;
             case R.id.navigation_trading:
                 fragment = tradingFrag;

@@ -36,7 +36,6 @@ import static com.example.shiven.bloombergproj.MainActivity.CRYPTO_KEY;
 import static com.example.shiven.bloombergproj.MainActivity.TAG_LOG;
 import static com.example.shiven.bloombergproj.MainActivity.currency;
 import static com.example.shiven.bloombergproj.MainActivity.initialInvestment;
-import static com.example.shiven.bloombergproj.MainActivity.profileFrag;
 import static com.example.shiven.bloombergproj.MainActivity.quantities;
 
 /**
@@ -97,7 +96,6 @@ public class TradingFrag extends Fragment{
                 quantities.set(crypto.getIndex(),Double.parseDouble(editText.getText().toString())+quantities.get(crypto.getIndex()));
                 Toast.makeText(getActivity(), "Added to Portfolio", Toast.LENGTH_SHORT).show();
                 initialInvestment+=quantities.get(crypto.getIndex())*crypto.getPrice();
-                profileFrag.refresh();
                 editText.setText("");
             }
         });
